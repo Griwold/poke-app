@@ -2,6 +2,8 @@ import { combineReducers } from '@reduxjs/toolkit'
 
 import pokemons from '../features/pokemons/pokemonSlice'
 
-const rootReducers: combineReducers({
+const rootReducers = combineReducers({
     pokemons
 })
+
+export default rootReducers;

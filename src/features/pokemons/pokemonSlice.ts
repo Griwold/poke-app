@@ -1,17 +1,33 @@
 import { createSlice, createAsyncThunk, createEntityAdapter, EntityState, PayloadAction, EntityId } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
+import axios from 'axios'
 
-import { PokemonDataUseType } from '../../types/pokemon'
+import { PokemonDataUseType, PokemonApiType, PokemonFormApiType } from '../../types/pokemon'
 
 interface PokemonState extends EntityState<PokemonDataUseType> {
     status: 'idle' | 'failed' | 'loading' | 'success',
     data: any
 }
 
-export const fetchPokemons = createAsyncThunk('pokemon/fetchPokemons', async (foo) => {
-        return foo
-    }
-)
+export const fetchPokemons = createAsyncThunk<
+    // Return type of the payload creator
+    PokemonDataUseType[],
+    // First argument to the payload creator
+    { name: string }
+>('pokemon/fetchPokemons', async ({ name }) => {
+
+    let url: string = `https://pokeapi.co/api/v2/pokemon`;
+    
+    console.log(name,'name');
+    if (name) url += `/${name}/`;
+
+    const response = await axios(url);
+    console.log(response,'response');
+
+    const pokemon: PokemonDataUseType[] = [{ name: response.data.name, image: response.data.sprites.other.home.front_default }]
+
+    return pokemon
+})
 
 export const pokemonAdapter = createEntityAdapter<PokemonDataUseType>({
     selectId: (pokemon) => pokemon.name,
@@ -33,6 +49,7 @@ const pokemonSlice = createSlice({
     extraReducers: builder => {
         builder.addCase(fetchPokemons.fulfilled, (state, action) => {
             state.status = 'success'
+            pokemonAdapter.setAll(state, action.payload)
         })
         builder.addCase(fetchPokemons.pending, (state, action) => {
             state.status = 'loading'

@@ -1,12 +1,20 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore, Middleware } from '@reduxjs/toolkit'
 import { createWrapper } from 'next-redux-wrapper';
+import thunkMiddleware from 'redux-thunk'
 
+import monitorReducersEnhancer from './enhancers/monitorReducers'
+import loggerMiddleware from './middlewares/logger'
 import rootReducers from '../reducers/index';
 // ...
 
+
+const middlewares: Middleware[] = [thunkMiddleware, loggerMiddleware];
+const enhancers: any[] = [monitorReducersEnhancer];
+
 export const makeStore = () => configureStore({
   reducer: rootReducers,
-  devTools: true
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middlewares),
+  devTools: process.env.NODE_ENV !== 'production',
 })
 
 

@@ -1,15 +1,18 @@
 import { FC } from 'react'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import CardMedia from '@mui/material/CardMedia'
-import Typography from '@mui/material/Typography'
-import { CardActionArea } from '@mui/material'
+import { 
+    CardActionArea, 
+    Typography, 
+    CardMedia, 
+    CardContent, 
+    Card 
+} from '@mui/material'
+
 import { PokemonDataUseType } from '../../types/pokemon'
 
 const PokemonCard: FC<{pokemon: PokemonDataUseType}> = ({pokemon}) => {
 
     return (
-        <Card sx={{ width: 200 }}>
+        <Card sx={{ width: 250 }}>
             <CardActionArea>
                 <CardMedia
                     component="img"

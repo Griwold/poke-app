@@ -19,25 +19,27 @@ const Pokemons = () => {
     };
 
     return (
-        <Container>
+        <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
             <Box m={2}>
-                <SearchBar text={name} setText={setName} onSearch={onSearch}/>
+                <SearchBar text={name} setText={setName} onSearch={onSearch} />
             </Box>
-            <Box mb={2}>
-                <Grid container rowSpacing={2} columnSpacing={6} >
-                    {pokemons.map(pokemon => {
-                        if (pokemon) {
-                            return (
-                                <CustomGridItem item key={pokemon.name} xs={12} sm={4} lg={3}>
-                                    <PokemonCard pokemon={pokemon} />
-                                </CustomGridItem>
-                            )
-                        }
-                    })}
-                    {/* <Link href={'/newPage'}>Navigation to newPage</Link> */}
-                </Grid>
-            </Box>
-        </Container>
+            <Container >
+                <Box mb={2}>
+                    <Grid container rowSpacing={2} columnSpacing={6} >
+                        {pokemons.map(pokemon => {
+                            if (pokemon) {
+                                return (
+                                    <CustomGridItem item key={pokemon.name} xs={12} sm={4} lg={3}>
+                                        <PokemonCard pokemon={pokemon} />
+                                    </CustomGridItem>
+                                )
+                            }
+                        })}
+                        {/* <Link href={'/newPage'}>Navigation to newPage</Link> */}
+                    </Grid>
+                </Box>
+            </Container>
+        </Box>
     )
 }
 

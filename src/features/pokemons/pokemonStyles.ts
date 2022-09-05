@@ -1,16 +1,20 @@
 import { styled } from '@mui/material/styles'
 import { Box, Grid } from '@mui/material'
 
-export const Container = styled(Box) `
-    width: 1000px; 
-    display: flex; 
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;  
-`
+interface BoxType {
+    bgcolor: string
+}
 
-export const CustomGridItem = styled(Grid)`
-    display: flex;
-    justify-content: center;
-    align-item: center;
-`
+export const Container = styled(Box)<BoxType>(({ bgcolor }) => ({
+    width: 1000,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+})) as typeof Box
+
+export const CustomGridItem = styled(Grid)({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItem: 'center'
+}) as typeof Grid

@@ -12,7 +12,7 @@ import { styled } from '@mui/material/styles'
 interface SearchBarType {
     text: string;
     setText: Dispatch<SetStateAction<string>>;
-    onSearch: () => void
+    onSearch: () => void;
 }
 
 const CustomInput = styled(OutlinedInput)`

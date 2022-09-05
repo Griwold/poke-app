@@ -35,6 +35,7 @@ const SearchBar: FC<SearchBarType> = ({ text, setText, onSearch }) => {
                 color='secondary'
                 value={text}
                 onChange={(str) => setText(str.target.value)}
+                onKeyUp={(e) => (e.key === 'Enter') && onSearch()}
                 endAdornment={
                     <InputAdornment position="end">
                         <IconButton

@@ -10,7 +10,7 @@ export const Container = styled(Box)<BoxType>(({ bgcolor }) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'flex-start'
 })) as typeof Box
 
 export const CustomGridItem = styled(Grid)({
@@ -18,3 +18,9 @@ export const CustomGridItem = styled(Grid)({
     justifyContent: 'center',
     alignItem: 'center'
 }) as typeof Grid
+
+export const ContainerFeedback = styled(Box)({
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%'
+}) as typeof Box

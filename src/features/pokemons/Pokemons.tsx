@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Grid, Box, CircularProgress } from "@mui/material"
+import { useRouter } from "next/router";
 
 import { useAppSelector, useAppDispatch } from '../../constants/hooks'
 import SearchBar from '../../components/SearchBar'
@@ -14,7 +15,7 @@ const Pokemons = () => {
     const status = useAppSelector(state => state.pokemons.status);
     const dispatch = useAppDispatch();
     const [name, setName] = useState<string>('');
-
+    
     const onSearch = () => {
         dispatch(fetchPokemons({ name }))
     };
@@ -34,12 +35,14 @@ const Pokemons = () => {
                                 if (pokemon) {
                                     return (
                                         <CustomGridItem item key={pokemon.name} xs={12} sm={6} md={4} lg={pokemons.length === 1 ? 12 : 3}>
-                                            <PokemonCard pokemon={pokemon} />
+                                            {/* <Link href={'/pokemon'}> */}
+                                                <PokemonCard pokemon={pokemon} />
+                                            {/* </Link> */}
                                         </CustomGridItem>
                                     )
                                 }
                             })}
-                            {/* <Link href={'/newPage'}>Navigation to newPage</Link> */}
+                            <Link href={'/newPage'}>Navigation to newPage</Link>
                         </Grid>
                     </Box>
                 </Container>

@@ -6,13 +6,18 @@ import {
     CardContent, 
     Card 
 } from '@mui/material'
+import { useRouter } from 'next/router'
 
 import { PokemonDataUseType } from '../../types/pokemon'
 
-const PokemonCard: FC<{pokemon: PokemonDataUseType}> = ({pokemon}) => {
+interface PomekonCardType {
+    pokemon: PokemonDataUseType
+}
 
+const PokemonCard: FC<PomekonCardType> = ({pokemon}) => {
+    const router = useRouter();
     return (
-        <Card sx={{ width: 250 }}>
+        <Card sx={{ width: 250 }} onClick={() => router.push(`pokemon/${pokemon.name}`)}>
             <CardActionArea>
                 <CardMedia
                     component="img"

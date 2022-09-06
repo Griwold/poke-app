@@ -12,7 +12,7 @@ const App = () => (
 		display={'flex'}
 		minHeight={'100vh'}
 		justifyContent={'center'}
-		sx={{ backgroundColor: '#f7ccb9' }}
+		// sx={{ backgroundColor: '#f7ccb9' }}
 	>
 		<Pokemons />
 	</Box>

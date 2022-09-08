@@ -2,37 +2,36 @@ import { createSlice, createAsyncThunk, createEntityAdapter, EntityState, Payloa
 import { HYDRATE } from 'next-redux-wrapper'
 import axios from 'axios'
 
-import { PokemonDataUseType, PokemonApiType } from '../../types/pokemon'
+import { PokemonApiType, PokemonType } from '../../types/pokemon'
 
-interface PokemonState extends EntityState<PokemonDataUseType> {
+interface PokemonState extends EntityState<PokemonType> {
     status: string,
     data: any,
-    filter: string
+    filter: string,
+    status_detail: string,
+    pokemon_detail: PokemonType | null
 }
 
 export const fetchPokemons = createAsyncThunk<
     // Return type of the payload creator
-    { pokemons: PokemonDataUseType[], filter: string },
+    { pokemons: PokemonType[], filter: string },
     // First argument to the payload creator
     { name: string }
 >('pokemon/fetchPokemons', async ({ name }) => {
 
     let url: string = `https://pokeapi.co/api/v2/pokemon`;
     let response: any;
-    let pokemons: PokemonDataUseType[];
+    let pokemons: PokemonType[];
 
     if (name) {
 
         url += `/${name}/`;
-
         response = await axios(url);
-
-        pokemons = [{ name: response.data.name, image: response.data.sprites.other.home.front_default }]
+        pokemons = [response.data]
 
     } else {
 
         response = await axios(url);
-
         pokemons = await Promise.all(
             response.data.results.map(async (pokemon: PokemonApiType) => {
                 const fetchPokemon = await axios(pokemon.url);
@@ -44,14 +43,29 @@ export const fetchPokemons = createAsyncThunk<
     return { pokemons, filter: name }
 })
 
-export const pokemonAdapter = createEntityAdapter<PokemonDataUseType>({
-    selectId: (pokemon) => pokemon.name,
+export const fetchPokemonDetail = createAsyncThunk<
+    PokemonType,
+    { id: string }
+>('pokemon/fetchPokemonDetail', async ({ id }) => {
+
+    const url = `https://pokeapi.co/api/v2/pokemon/${id}`
+
+    const response = await axios(url);
+
+    return response.data;
+
+})
+
+export const pokemonAdapter = createEntityAdapter<PokemonType>({
+    selectId: (pokemon) => pokemon.id,
 });
 
 const initialState: PokemonState = pokemonAdapter.getInitialState({
     status: 'idle',
     data: null,
-    filter: ''
+    filter: '',
+    status_detail: 'idle',
+    pokemon_detail: null
 })
 
 const pokemonSlice = createSlice({
@@ -59,7 +73,13 @@ const pokemonSlice = createSlice({
     initialState,
     reducers: {
         setPokemons: (state, action: any) => {
+            console.log(action, 'action');
+            
             state.data = action.payload
+        },
+        setPokemonDetail: (state, action) => {
+            state.pokemon_detail = action.payload
+            state.status_detail = 'success'
         }
     },
     extraReducers: builder => {
@@ -79,9 +99,21 @@ const pokemonSlice = createSlice({
             pokemonAdapter.setAll(state, action.payload.pokemons.data.results)
             state.status = 'success'
         })
+        builder.addCase(fetchPokemonDetail.fulfilled, (state, action) => {
+            state.status_detail = 'success'
+            state.pokemon_detail = action.payload
+        })
+        builder.addCase(fetchPokemonDetail.pending, (state, action) => {
+            state.status_detail = 'loading'
+        })
+        builder.addCase(fetchPokemonDetail.rejected, (state, action) => {
+            state.status_detail = action.error.code || 'failed'
+        })
     }
 })
 
 export const { setPokemons } = pokemonSlice.actions;
+
+export const { setPokemonDetail } = pokemonSlice.actions;
 
 export default pokemonSlice.reducer;

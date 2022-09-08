@@ -28,7 +28,7 @@ const SearchBar: FC<SearchBarType> = ({ text, setText, onSearch }) => {
 
     return (
         <FormControl sx={{ m: 1, width: 300 }} variant="outlined">
-            <InputLabel size='small' color='secondary' htmlFor="outlined-adornment-search">Search</InputLabel>
+            <InputLabel size='small' color='secondary' htmlFor="outlined-adornment-search">Search pokemon</InputLabel>
             <CustomInput
                 id="outlined-adornment-search"
                 size='small'
@@ -48,7 +48,7 @@ const SearchBar: FC<SearchBarType> = ({ text, setText, onSearch }) => {
                         </IconButton>
                     </InputAdornment>
                 }
-                label="Search"
+                label="Search pokemon"
             />
         </FormControl>
     )

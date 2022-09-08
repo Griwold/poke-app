@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Link from "next/link";
 import { Grid, Box, CircularProgress } from "@mui/material"
 
 import { useAppSelector, useAppDispatch } from '../../constants/hooks'
@@ -14,7 +13,7 @@ const Pokemons = () => {
     const status = useAppSelector(state => state.pokemons.status);
     const dispatch = useAppDispatch();
     const [name, setName] = useState<string>('');
-
+    
     const onSearch = () => {
         dispatch(fetchPokemons({ name }))
     };
@@ -39,7 +38,6 @@ const Pokemons = () => {
                                     )
                                 }
                             })}
-                            {/* <Link href={'/newPage'}>Navigation to newPage</Link> */}
                         </Grid>
                     </Box>
                 </Container>

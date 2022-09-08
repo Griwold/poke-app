@@ -177,3 +177,15 @@ export interface Type {
     slot: number;
     type: Species;
 }
+
+export interface InfoType {
+    count: number;
+    next: string | null;
+    previous: null | string;
+    results: Result[];
+}
+
+export interface Result {
+    name: string;
+    url: string;
+}

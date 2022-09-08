@@ -30,7 +30,7 @@ export const getServerSideProps = wrapper.getServerSideProps(store => async () =
 				return fetchPokemon.data
 			})
 		)
-
+				
 		store.dispatch(setPokemons({ ...response.data, results: fetchDataPokemon }))
 	} catch (error) {
 		console.log('error >>>>>>>>', error);

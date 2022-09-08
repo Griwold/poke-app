@@ -55,7 +55,6 @@ export const fetchPokemonPagining = createAsyncThunk<
 
     let response;
     let pokemons: PokemonType[] = [];
-    console.log(nextPage, 'nextPage');
     
     if(nextPage) {
         response = await axios(nextPage);
@@ -65,7 +64,6 @@ export const fetchPokemonPagining = createAsyncThunk<
                 return fetchPokemon.data
             })
         )
-        console.log(response, "RESPONSE");
     }
     return {pokemons, next_page: response?.data.next};
 })
@@ -113,6 +111,7 @@ const pokemonSlice = createSlice({
             state.status = 'success'
             pokemonAdapter.setAll(state, action.payload.pokemons)
             state.filter = action.payload.filter
+            if (!!action.payload.filter) state.next_page = null
         })
         builder.addCase(fetchPokemons.pending, (state, action) => {
             state.status = 'loading'
@@ -127,8 +126,8 @@ const pokemonSlice = createSlice({
             state.status = 'success'
         })
         builder.addCase(fetchPokemonDetail.fulfilled, (state, action) => {
-            state.status_detail = 'success'
             state.pokemon_detail = action.payload
+            state.status_detail = 'success'
         })
         builder.addCase(fetchPokemonDetail.pending, (state, action) => {
             state.status_detail = 'loading'

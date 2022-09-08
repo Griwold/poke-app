@@ -18,7 +18,7 @@ const PokemonDetail = () => {
         if (!pokemon_detail && router.query.id) {
             dispatch(fetchPokemonDetail({ id: router.query.id as string }));
         }
-    }, [router.query.id])
+    }, [router.query.id, pokemon_detail, dispatch])
 
     const convertToFeetandInch = (meters: number) => {
         let height = meters * (1 / 0.0254);
@@ -43,8 +43,6 @@ const PokemonDetail = () => {
     const capitalizeUpperCase = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
     const selectAbility = () => capitalizeUpperCase(pokemon_detail?.abilities.find(ability => !ability.is_hidden)?.ability.name || '');
-
-
 
     return (
         <Container>

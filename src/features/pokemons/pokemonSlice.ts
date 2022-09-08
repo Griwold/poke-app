@@ -1,15 +1,17 @@
-import { createSlice, createAsyncThunk, createEntityAdapter, EntityState, PayloadAction, EntityId } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createEntityAdapter, EntityState, PayloadAction } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 import axios from 'axios'
 
-import { PokemonApiType, PokemonType } from '../../types/pokemon'
+import { PokemonApiType, PokemonType, InfoType } from '../../types/pokemon'
+import { RootState } from '../../store'
 
 interface PokemonState extends EntityState<PokemonType> {
     status: string,
-    data: any,
+    data: InfoType | null,
     filter: string,
     status_detail: string,
-    pokemon_detail: PokemonType | null
+    pokemon_detail: PokemonType | null,
+    next_page: string | null
 }
 
 export const fetchPokemons = createAsyncThunk<
@@ -43,6 +45,31 @@ export const fetchPokemons = createAsyncThunk<
     return { pokemons, filter: name }
 })
 
+export const fetchPokemonPagining = createAsyncThunk<
+    { pokemons: PokemonType[], next_page: string | null },
+    void,
+    { state: RootState }
+>('pokemon/fetchPokemonPagining', async (args, { getState }) => {
+
+    const nextPage = await getState().pokemons.next_page;
+
+    let response;
+    let pokemons: PokemonType[] = [];
+    console.log(nextPage, 'nextPage');
+    
+    if(nextPage) {
+        response = await axios(nextPage);
+        pokemons = await Promise.all(
+            response.data.results.map(async (pokemon: PokemonApiType) => {
+                const fetchPokemon = await axios(pokemon.url);
+                return fetchPokemon.data
+            })
+        )
+        console.log(response, "RESPONSE");
+    }
+    return {pokemons, next_page: response?.data.next};
+})
+
 export const fetchPokemonDetail = createAsyncThunk<
     PokemonType,
     { id: string }
@@ -65,16 +92,15 @@ const initialState: PokemonState = pokemonAdapter.getInitialState({
     data: null,
     filter: '',
     status_detail: 'idle',
-    pokemon_detail: null
+    pokemon_detail: null,
+    next_page: null
 })
 
 const pokemonSlice = createSlice({
     name: 'pokemon',
     initialState,
     reducers: {
-        setPokemons: (state, action: any) => {
-            console.log(action, 'action');
-            
+        setPokemons: (state, action: PayloadAction<InfoType>) => {
             state.data = action.payload
         },
         setPokemonDetail: (state, action) => {
@@ -97,6 +123,7 @@ const pokemonSlice = createSlice({
         builder.addCase(HYDRATE, (state, action: any) => {
             // if (!action.payload.pokemon) return state
             pokemonAdapter.setAll(state, action.payload.pokemons.data.results)
+            state.next_page = action.payload.pokemons.data.next
             state.status = 'success'
         })
         builder.addCase(fetchPokemonDetail.fulfilled, (state, action) => {
@@ -108,6 +135,14 @@ const pokemonSlice = createSlice({
         })
         builder.addCase(fetchPokemonDetail.rejected, (state, action) => {
             state.status_detail = action.error.code || 'failed'
+        })
+        builder.addCase(fetchPokemonPagining.fulfilled, (state, action) => {
+            state.next_page = action.payload.next_page
+            pokemonAdapter.addMany(state, action.payload.pokemons)
+        })
+        builder.addCase(fetchPokemonPagining.pending, (state, action) => {
+        })
+        builder.addCase(fetchPokemonPagining.rejected, (state, action) => {
         })
     }
 })

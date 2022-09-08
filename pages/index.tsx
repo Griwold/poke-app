@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 import Pokemons from '../src/features/pokemons/Pokemons'
 import { wrapper } from '../src/store';
 import { setPokemons } from '../src/features/pokemons/pokemonSlice'
-import { PokemonApiType, PokemonDataUseType } from '../src/types/pokemon'
+import { PokemonApiType, PokemonType } from '../src/types/pokemon'
 
 const App = () => (
 
@@ -21,14 +21,13 @@ const App = () => (
 export default App;
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async () => {
-
 	try {
 		const response = await axios("https://pokeapi.co/api/v2/pokemon");
 
-		const fetchDataPokemon: PokemonDataUseType[] = await Promise.all(
+		const fetchDataPokemon: PokemonType[] = await Promise.all(
 			response.data.results.map(async (pokemon: PokemonApiType) => {
 				const fetchPokemon = await axios(pokemon.url);	
-				return { name: pokemon.name, image: fetchPokemon.data.sprites.other.home.front_default }
+				return fetchPokemon.data
 			})
 		)
 

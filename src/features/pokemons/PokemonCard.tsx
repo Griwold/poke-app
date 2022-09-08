@@ -1,28 +1,38 @@
 import { FC } from 'react'
-import { 
-    CardActionArea, 
-    Typography, 
-    CardMedia, 
-    CardContent, 
-    Card 
+import {
+    CardActionArea,
+    Typography,
+    CardMedia,
+    CardContent,
+    Card
 } from '@mui/material'
 import { useRouter } from 'next/router'
 
-import { PokemonDataUseType } from '../../types/pokemon'
+import { PokemonType } from '../../types/pokemon'
+import { setPokemonDetail } from './pokemonSlice'
+import { useAppDispatch } from '../../constants/hooks'
 
 interface PomekonCardType {
-    pokemon: PokemonDataUseType
+    pokemon: PokemonType
 }
 
-const PokemonCard: FC<PomekonCardType> = ({pokemon}) => {
+const PokemonCard: FC<PomekonCardType> = ({ pokemon }) => {
+
     const router = useRouter();
+    const dispatch = useAppDispatch();
+
+    const onDetail = () => {
+        dispatch(setPokemonDetail(pokemon))
+        router.push(`/pokemon/${pokemon.id}`);
+    }
+
     return (
-        <Card sx={{ width: 250 }} onClick={() => router.push(`pokemon/${pokemon.name}`)}>
+        <Card sx={{ width: 250 }} onClick={onDetail}>
             <CardActionArea>
                 <CardMedia
                     component="img"
                     height="auto"
-                    image={pokemon.image}
+                    image={pokemon.sprites.other?.home.front_default}
                     alt={pokemon.name}
                 />
                 <CardContent>
@@ -30,7 +40,7 @@ const PokemonCard: FC<PomekonCardType> = ({pokemon}) => {
                         {pokemon.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" textAlign={'center'} >
-                        #{pokemon.image.split('/').pop()?.split('.')[0].padStart(3, '0')}
+                        #{pokemon.id.toString().padStart(3, '0')}
                     </Typography>
                 </CardContent>
             </CardActionArea>

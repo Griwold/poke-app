@@ -41,7 +41,7 @@ const Pokemons = () => {
     }
 
     const customWidth = (size: number) => pokemons.length === 1 ? 12 : size
-
+    
     return (
         <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
             <Box m={2}>

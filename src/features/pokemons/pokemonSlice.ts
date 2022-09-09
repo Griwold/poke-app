@@ -16,7 +16,7 @@ interface PokemonState extends EntityState<PokemonType> {
 
 export const fetchPokemons = createAsyncThunk<
     // Return type of the payload creator
-    { pokemons: PokemonType[], filter: string },
+    { pokemons: PokemonType[], filter: string, next_page: string | null },
     // First argument to the payload creator
     { name: string }
 >('pokemon/fetchPokemons', async ({ name }) => {
@@ -31,18 +31,19 @@ export const fetchPokemons = createAsyncThunk<
         response = await axios(url);
         pokemons = [response.data]
 
+        return { pokemons, filter: name, next_page: null }
+
     } else {
 
         response = await axios(url);
         pokemons = await Promise.all(
             response.data.results.map(async (pokemon: PokemonApiType) => {
                 const fetchPokemon = await axios(pokemon.url);
-                return { name: pokemon.name, image: fetchPokemon.data.sprites.other.home.front_default }
+                return fetchPokemon.data
             })
         )
-
+        return { pokemons, filter: name, next_page: response.data.next }
     }
-    return { pokemons, filter: name }
 })
 
 export const fetchPokemonPagining = createAsyncThunk<
@@ -111,7 +112,7 @@ const pokemonSlice = createSlice({
             state.status = 'success'
             pokemonAdapter.setAll(state, action.payload.pokemons)
             state.filter = action.payload.filter
-            if (!!action.payload.filter) state.next_page = null
+            state.next_page = action.payload.next_page
         })
         builder.addCase(fetchPokemons.pending, (state, action) => {
             state.status = 'loading'

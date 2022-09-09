@@ -121,7 +121,6 @@ const pokemonSlice = createSlice({
             state.status = action.error.code || 'failed'
         })
         builder.addCase(HYDRATE, (state, action: any) => {
-            // if (!action.payload.pokemon) return state
             pokemonAdapter.setAll(state, action.payload.pokemons.data.results)
             state.next_page = action.payload.pokemons.data.next
             state.status = 'success'
